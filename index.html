@@ -981,11 +981,17 @@
             nav.innerHTML = phases.map((p, i) => {
                 const isPhaseActive = (i === currentPhaseIdx && currentTopicIdx === -1);
                 const isPhaseSelected = (i === currentPhaseIdx);
+                const completedCount = p.topics.filter(t => taskStatus[t.id]).length;
+                const totalCount = p.topics.length;
+                const isPhaseDone = completedCount === totalCount && totalCount > 0;
 
                 return `
                 <div class="space-y-1">
-                    <button onclick="changePhase(${i})" class="w-full text-left px-3 py-2.5 rounded-xl text-sm font-bold transition-all hover:bg-stone-100 ${isPhaseActive ? 'sidebar-active-phase shadow-sm' : 'text-stone-600'}">
-                        Phase ${p.id}: ${p.title.replace(/^Phase \d+: /, '')}
+                    <button onclick="changePhase(${i})" class="w-full text-left px-3 py-2.5 rounded-xl text-sm font-bold transition-all hover:bg-stone-100 flex items-center justify-between ${isPhaseActive ? 'sidebar-active-phase shadow-sm' : 'text-stone-600'}">
+                        <span>Phase ${p.id}: ${p.title.replace(/^Phase \d+: /, '')}</span>
+                        <span class="text-[10px] ${isPhaseDone ? 'text-emerald-500 bg-emerald-50 border-emerald-100' : 'text-stone-400 bg-stone-50 border-stone-100'} px-2 py-0.5 rounded-full border">
+                            ${isPhaseDone ? '✓' : `${completedCount}/${totalCount}`}
+                        </span>
                     </button>
                     ${isPhaseSelected ? `
                         <div class="pl-4 space-y-1 border-l-2 border-stone-100 ml-3">
@@ -994,7 +1000,7 @@
                     const isDone = taskStatus[t.id];
                     return `
                                     <button onclick="changeTopic(${i}, ${j})" class="w-full text-left px-3 py-2 rounded-lg text-xs transition-all hover:bg-amber-50 flex items-start justify-between ${isTopicActive ? 'sidebar-active-topic' : 'text-stone-500'}">
-                                        <span class="leading-tight text-[11px]">Topic ${t.id}: ${t.name}</span>
+                                        <span class="leading-tight text-[11px] truncate pr-2">Topic ${t.id}: ${t.name}</span>
                                         ${isDone ? '<span class="text-emerald-500 font-bold ml-1 flex-shrink-0">✓</span>' : ''}
                                     </button>
                                 `;
